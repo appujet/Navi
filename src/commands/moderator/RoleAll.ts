@@ -72,6 +72,5 @@ export default class RoleAll extends Command {
         });
         embed.setDescription(`Added role to ${toGive.length} users`).setColor(client.color.green)
         return ctx.editMessage({ embeds: [embed] })
-
     }
 }

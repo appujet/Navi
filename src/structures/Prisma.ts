@@ -38,7 +38,7 @@ const cacheMiddleware: Prisma.Middleware = createPrismaRedisCache({
         { model: "Premium", cacheTime: 180 },
         { model: "Logger", cacheTime: 180 },
         { model: "LogChannel", cacheTime: 180 },
-        { model: "Youtube", cacheTime: 180 },
+        { model: "Youtube", cacheTime: 1 },
         { model: "Welcome", cacheTime: 180 },
         { model: "welcomeEmbed", cacheTime: 180 },
         { model: "leaveEmbed", cacheTime: 180 },
