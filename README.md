@@ -47,10 +47,22 @@ Let Navi be your guiding star, navigating Discord's uncharted waters with harmon
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-1. Fork the project.
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
+1. Fork the project on GitHub.
+```bash
+git clone https://github.com/brblacky/Navi.git
+```
+2. Create your feature branch.
+```bash 
+git checkout -b feature/AmazingFeature
+```
+3. Commit your changes.
+```bash
+git commit -m 'Add some AmazingFeature'
+```
+4. Push to the branch.
+```bash
+git push origin feature/AmazingFeature
+```
 5. Open a pull request.
 
 ## 🔧 **Requirements** 🔧
@@ -65,7 +77,7 @@ Distributed under the Creative Commons Attribution-NonCommercial 4.0 Internation
 
 ## 📧 **Contact** 📧
 
-- **Discord**: `brblacky#0001`
+- **Discord**: `devblacky`
 - **Email**: `sdipedit@gmail.com`
 
 [version-shield]: https://img.shields.io/github/package-json/v/brblacky/Navi?style=for-the-badge
