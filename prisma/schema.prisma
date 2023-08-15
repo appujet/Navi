@@ -1,0 +1,221 @@
+
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  guildId    String       @unique
+  prefix     String?      @default("!")
+  setup      Setup?
+  stay       stay?
+  dj         Dj?
+  youtube    Youtube?
+  botchannel Botchannel?
+  logger     Logger?
+  log        LogChannel[]
+  premium    Premium?
+  welcome    Welcome?
+  ban       Ban[]
+}
+
+model Setup {
+  guildId   String
+  guild     Guild?  @relation(fields: [guildId], references: [guildId])
+  textId    String?
+  messageId String?
+
+  @@unique([guildId])
+}
+
+model stay {
+  guildId String
+  guild   Guild   @relation(fields: [guildId], references: [guildId])
+  textId  String?
+  voiceId String?
+
+  @@unique([guildId])
+}
+
+model Botchannel {
+  guildId String
+  guild   Guild   @relation(fields: [guildId], references: [guildId])
+  textId  String?
+
+  @@unique([guildId])
+}
+
+model Dj {
+  guildId String
+  guild   Guild?  @relation(fields: [guildId], references: [guildId])
+  roles   Roles[]
+  mode    Boolean @default(false)
+
+  @@unique([guildId])
+}
+
+model Roles {
+  guildId String
+  Dj      Dj?    @relation(fields: [guildId], references: [guildId])
+  roleId  String @unique
+
+  @@unique([guildId])
+}
+
+model User {
+  id        String     @id
+  userId    String     @unique
+  playlists Playlist[]
+  premium   Premium?
+  ban       Ban[]
+}
+
+model Playlist {
+  id     String   @id
+  userId String
+  user   User?    @relation(fields: [userId], references: [userId])
+  name   String
+  songs  String[]
+
+  @@unique([userId, name])
+}
+
+model Premium {
+  isPremium Boolean @default(false)
+  userId    String  @unique
+  guildId   String  @unique
+  user      User?   @relation(fields: [userId], references: [userId])
+  guild     Guild?  @relation(fields: [guildId], references: [guildId])
+}
+
+model Logger {
+  id         String       @id @default(uuid())
+  guildId    String?
+  guild      Guild?       @relation(fields: [guildId], references: [guildId])
+  LogChannel LogChannel[]
+
+  @@unique([guildId])
+}
+
+model LogChannel {
+  id        String   @id @default(uuid())
+  guildId   String
+  logGuild  String?
+  guild     Guild?   @relation(fields: [guildId], references: [guildId])
+  logger    Logger?  @relation(fields: [logGuild], references: [guildId])
+  textId    String?
+  hookUrl   String?
+  mode      Boolean  @default(false)
+  type      String[]
+  color     String   @default("#ff0000")
+  moderator String?
+
+  @@unique([guildId, type])
+}
+
+model Youtube {
+  id        String   @id @default(uuid())
+  guildId   String   @unique
+  guild     Guild?   @relation(fields: [guildId], references: [guildId])
+  textId    String?
+  mode      Boolean  @default(false)
+  channel   String[]
+  message   String?
+  role      String?  @default("@everyone")
+  isEmbed   Boolean  @default(true)
+  moderator String?
+}
+
+model Welcome {
+  id                    String        @id @default(uuid())
+  guildId               String        
+  guild                 Guild?        @relation(fields: [guildId], references: [guildId])
+  jsonCode              String?
+  jsonCodeLeave         String?
+  welcomeToggle         Boolean       @default(false)
+  leaveToggle           Boolean       @default(false)
+  welcomeBackground     String?
+  leaveBackground       String?
+  welcomePrivateToggle  Boolean       @default(false)
+  leavePrivateToggle    Boolean       @default(false)
+  welcomeMessageToggle  Boolean       @default(false)
+  leaveMessageToggle    Boolean       @default(false)
+  welcomeEmbedToggle    Boolean       @default(false)
+  leaveEmbedToggle      Boolean       @default(false)
+  welcomeRoleToggle     Boolean       @default(false)
+  welcomeRole           welcomeRole[]
+  welcomeMesage         String?       @default("Hello {user}, Welcome to **{server}**!")
+  leaveMessage          String?       @default("{user} just left server")
+  welcomeChannel String?
+  leaveChannel   String?
+  welcomeEmbed          welcomeEmbed?
+  leaveEmbed            leaveEmbed?
+  moderator             String?
+
+  @@unique([guildId])
+  @@unique([welcomeChannel])
+  @@unique([leaveChannel])
+}
+
+model welcomeEmbed {
+  id          String  @id @default(uuid())
+  guildId     String
+  guild       Welcome @relation(fields: [guildId], references: [guildId])
+  title       String  @default("Welcome!")
+  titleUrl    String?
+  description String? @default("Welcome {user} to {server}, we now have {memberCount} Members!")
+  color       String? @default("#ff0000")
+  footer      String?
+  footerUrl   String?
+  thumbnail   String?
+  image       String?
+  authorName  String?
+  authorUrl   String?
+  authorIcon  String?
+  moderator   String?
+  @@unique([guildId])
+}
+
+model leaveEmbed {
+  id          String  @id @default(uuid())
+  guildId     String
+  guild       Welcome @relation(fields: [guildId], references: [guildId])
+  title       String  @default("Goodbye!")
+  titleUrl    String?
+  description String? @default("{user} just left {server}, we now have {memberCount} Members!")
+  color       String? @default("#ff0000")
+  footer      String?
+  footerUrl   String?
+  thumbnail   String?
+  image       String?
+  authorName  String?
+  authorUrl   String?
+  authorIcon  String?
+
+  @@unique([guildId])
+}
+
+model welcomeRole {
+  id      String  @id @default(uuid())
+  guildId String
+  guild   Welcome @relation(fields: [guildId], references: [guildId])
+  roleId  String
+
+  @@unique([guildId, roleId])
+}
+
+model Ban {
+  id        String  @id @default(uuid())
+  guildId   String
+  guild     Guild?  @relation(fields: [guildId], references: [guildId])
+  userId    String
+  user      User?   @relation(fields: [userId], references: [userId])
+  reason    String?
+  moderator String?
+  time      DateTime
+}
