@@ -3,6 +3,7 @@ import { Navi } from '../../structures/index.js';
 import Parser from 'rss-parser';
 import axios, { AxiosRequestConfig } from 'axios';
 import * as cheerio from 'cheerio';
+import { Youtube } from '@prisma/client';
 
 
 type ChannelInfoOptions = {
@@ -55,7 +56,7 @@ export default class YouTubeNotification {
     }
     public async start() {
         this.client.logger.info('YouTube Notification started');
-        
+
         setInterval(async () => {
             const youtubeChannels = await this.client.prisma.youtube.findMany({ where: { mode: true } });
             if (!youtubeChannels) return;
@@ -79,23 +80,31 @@ export default class YouTubeNotification {
                 },
                 data: { lastVideoId: lastVideo[0].id }
             });
-            const text = {
-                video: "just uploaded a new video",
-                live: "is now live",
-                premiere: "is now premiering"
+            const ytMessage = await this.client.prisma.ytMessage.findFirst({
+                where: {
+                    youtubeId: channel.id
+                }
+            });
+            let text: string;
+            if (ytMessage) {
+                text = ytMessage[lastVideo ? (lastVideo[0].isLive ? 'live' : lastVideo[0].premiere ? 'premiere' : 'video') : 'video'];
+            } else {
+                text = `Hey {role}, **{author}** is ${lastVideo ? (lastVideo[0].isLive ? 'live now!' : lastVideo[0].premiere ? 'premiering a new video!' : 'just uploaded a new video!') : 'just uploaded a new video!'}\n{url}\n{date}`;
             }
+
             const msg = {
-                content: `${channel.message.replace('{url}', lastVideo[0].url).replace('{title}', lastVideo[0].title).replace('{author}', lastVideo[0].author).replace('{channel}', lastVideo[0].channel.name).replace('{date}', `<t:${Math.floor(new Date(lastVideo[0].uploadedAt).getTime() / 1000)}:R>`).replace('{role}', channel.role).replace('{text}', text[lastVideo[0].isLive ? 'live' : lastVideo[0].premiere ? 'premiere' : 'video'])}`,
-            }
+                content: text.replace('{url}', lastVideo ? lastVideo[0].url : "https://www.youtube.com/").replace('{title}', lastVideo ? lastVideo[0].title : "Unknown").replace('{author}', lastVideo ? lastVideo[0].author : "Unknown").replace('{channel}', lastVideo ? lastVideo[0].channel.name : "Unknown").replace('{date}', `<t:${Math.floor(new Date(lastVideo ? lastVideo[0].uploadedAt : new Date().getTime()).getTime() / 1000)}:R>`).replace('{role}', channel.role),
+            };
+
             const embed = this.client.embed()
-                .setTitle(lastVideo[0].title)
-                .setURL(lastVideo[0].url)
-                .setAuthor({ name: lastVideo[0].author, iconURL: lastVideo[0].channel.logo[0].url })
-                .setThumbnail(lastVideo[0].channel.logo[0].url)
-                .setDescription(lastVideo[0].channel.description.length > 80 ? lastVideo[0].channel.description.slice(0, 80) + '...' : lastVideo[0].channel.description)
-                .setImage(lastVideo[0].thumbnail)
-                .setFooter({ text: lastVideo[0].channel.name, iconURL: lastVideo[0].channel.banner[0].url })
-                .setTimestamp(new Date(lastVideo[0].uploadedAt).getTime());
+                .setTitle(lastVideo ? lastVideo[0].title : "Unknown")
+                .setURL(lastVideo ? lastVideo[0].url : "https://www.youtube.com/")
+                .setAuthor({ name: lastVideo ? lastVideo[0].channel.name : "Unknown", iconURL: lastVideo ? lastVideo[0].channel.logo[0].url : "https://www.youtube.com/" })
+                .setThumbnail(lastVideo ? lastVideo[0].channel.logo[0].url : this.client.user.defaultAvatarURL)
+                .setDescription(lastVideo ? lastVideo[0].description.length > 80 ? lastVideo[0].description.slice(0, 80) + '...' : lastVideo[0].description : "No description")
+                .setImage(lastVideo ? lastVideo[0].thumbnail : "https://www.youtube.com/")
+                .setColor(this.client.config.color.red)
+                .setTimestamp(lastVideo ? new Date(lastVideo[0].uploadedAt).getTime() : new Date().getTime());
             if (channel.isEmbed) {
                 textChannel.send({ embeds: [embed], content: msg.content });
             } else {

@@ -117,17 +117,26 @@ model LogChannel {
 }
 
 model Youtube {
-  id          String  @id @default(uuid())
+  id          String     @id @default(uuid())
   guildId     String
-  guild       Guild?  @relation(fields: [guildId], references: [guildId])
+  guild       Guild?     @relation(fields: [guildId], references: [guildId])
   textId      String?
-  mode        Boolean @default(false)
-  channelId   String  @unique
+  mode        Boolean    @default(false)
+  channelId   String     @unique
   lastVideoId String?
-  message     String? @default("Hey {role}, **{author}** is {text}\n{url}\nuploaded at {date}")
-  role        String? @default("@everyone")
-  isEmbed     Boolean @default(false)
+  role        String?    @default("@everyone")
+  isEmbed     Boolean    @default(false)
   moderator   String?
+  message     YtMessage?
+}
+
+model YtMessage {
+  id        String  @id @default(uuid())
+  video     String? @default("Hey {role}, **{author}** has just uploaded a new video!\n{url}\n{date}")
+  live      String? @default("Hey {role}, **{author}** is live now!\n{url}\n{date}")
+  premiere  String? @default("Hey {role}, **{author}** is premiering a new video!\n{url}\n{date}")
+  youtube   Youtube @relation(fields: [youtubeId], references: [id])
+  youtubeId String  @unique
 }
 
 model Welcome {

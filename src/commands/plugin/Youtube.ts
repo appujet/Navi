@@ -55,7 +55,7 @@ export default class YouTubeCommand extends Command {
         });
     }
     public async run(client: Navi, ctx: Context, args: any[]): Promise<any> {
-        
+
         let subCommand: string;
         let id: string;
         let channelId: string;
@@ -71,57 +71,58 @@ export default class YouTubeCommand extends Command {
         }
         if (subCommand === "set") {
             const channelId = extractChannelId(id);
-            console.log(channelId);
             const YT = new YouTubeNotification(client);
             const checkInYt = await YT.getChannelInfo(channelId);
             if (!checkInYt) {
                 return ctx.sendMessage("This channel does not exist.");
             }
-            
-            const checkDb = await client.prisma.youtube.findUnique({
+            const existingGuild = await client.prisma.guild.findUnique({
                 where: {
                     guildId: ctx.guild.id,
-                    channelId: checkInYt.id
                 },
             });
-            if (checkDb) {
-                    return ctx.sendMessage("This channel is already set.");
-            } else {
-                const data = await client.prisma.guild.findUnique({
-                    where: {
-                        guildId: ctx.guild.id
-                    },
-                    select: {
-                        youtube: true
-                    }
-                });
-                if (data) {
-                    await client.prisma.guild.update({
-                        where: {
-                            guildId: ctx.guild.id
+            if (existingGuild) {
+                await client.prisma.youtube.create({
+                    data: {
+                        guild: {
+                            connect: {
+                                guildId: existingGuild.guildId,
+                            },
                         },
-                        data: {
-                            youtube: {
-                                create: {
-                                    channelId: checkInYt.id,
-                                    textId: ctx.channel.id,
-                                    mode: true
-                                }
+                        channelId: checkInYt.id,
+                        textId: ctx.channel.id,
+                        mode: true,
+                        message: {
+                            create: {
+                                video: "Hey {role}, **{author}** has just uploaded a new video!\n{url}\n{date}",
+                                live: "Hey {role}, **{author}** is live now!\n{url}\n{date}",
+                                premiere: "Hey {role}, **{author}** is premiering a new video!\n{url}\n{date}"
                             }
                         }
-                    });
-                    return ctx.sendMessage(`Added channel \`${checkInYt.name}\` to the database.`);
-                } else {
-                    await client.prisma.youtube.create({
-                        data: {
-                            guildId: ctx.guild.id,
-                            channelId: checkInYt.id,
-                            textId: ctx.channel.id,
-                            mode: true
-                        }
-                    });
-                    return ctx.sendMessage(`Added channel \`${checkInYt.name}\` to the database.`);
-                }
+                    },
+                });
+                return ctx.sendMessage(`Added channel \`${checkInYt.name}\` to the database.`);
+            } else {
+                await client.prisma.guild.create({
+                    data: {
+                        guildId: ctx.guild.id,
+                        youtube: {
+                            create: {
+                                channelId: checkInYt.id,
+                                textId: ctx.channel.id,
+                                mode: true,
+                                message: {
+                                    create: {
+                                        video: "Hey {role}, **{author}** has just uploaded a new video!\n{url}\n{date}",
+                                        live: "Hey {role}, **{author}** is live now!\n{url}\n{date}",
+                                        premiere: "Hey {role}, **{author}** is premiering a new video!\n{url}\n{date}"
+                                    }
+                                }
+                            },
+                        },
+                    },
+                });
+                return ctx.sendMessage(`Added channel \`${checkInYt.name}\` to the database.`);
             }
         }
     }
