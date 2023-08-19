@@ -16,7 +16,7 @@ export default class GuildBanAdd extends Event {
         } catch (err) {
             if (['Missing Permissions', 'Missing Access'].includes(err.message)) return;
             return this.client.logger.error(`Error fetching ban: ${err.message}`);
-       }
+        }
         const log = await Servers.getLogger(ban.guild.id, logType.MemberBan);
         const audit = await ban.guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanAdd, limit: 1 });
         const entry = audit.entries.first();
@@ -32,7 +32,7 @@ export default class GuildBanAdd extends Event {
             .addFields(
                 { name: "Member", value: `<@${ban.user.id}> (\`${ban.user.id}\`)`, inline: true },
                 { name: "Reason", value: ban.reason ? ban.reason : "No reason provided", inline: true },
-        )
+            )
             .setFooter({ text: this.client.user.username, iconURL: this.client.user.displayAvatarURL({}) })
             .setTimestamp();
         await ClientLogger.sendWebhook(this.client, ban.guild.id, log.textId, {

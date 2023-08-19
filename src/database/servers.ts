@@ -13,7 +13,7 @@ export class Servers {
         return server;
     }
 
-    public static async setLogger(id: string, user: User, types: string[], channel: TextChannel, color: string): Promise<void> {
+    public static async setLogger(id: string, userId: string, types: string[], channelId: string, color: string): Promise<void> {
         const server = await prisma.guild.findUnique({
             where: {
                 guildId: id,
@@ -54,12 +54,12 @@ export class Servers {
                             LogChannel: {
                                 create: {
                                     guildId: id,
-                                    textId: channel.id,
+                                    textId: channelId,
                                     type: {
                                         set: types,
                                     },
                                     mode: true,
-                                    moderator: user.id,
+                                    moderator: userId,
                                     color: color,
                                 },
                             },
@@ -71,7 +71,7 @@ export class Servers {
             const logChannel = await prisma.logChannel.findFirst({
                 where: {
                     guildId: id,
-                    textId: channel.id,
+                    textId: channelId,
                 },
             });
 
@@ -93,12 +93,12 @@ export class Servers {
                 await prisma.logChannel.create({
                     data: {
                         guildId: id,
-                        textId: channel.id,
+                        textId: channelId,
                         type: {
                             set: types,
                         },
                         mode: true,
-                        moderator: user.id,
+                        moderator: userId,
                         color: color,
                     },
                 });
@@ -106,7 +106,7 @@ export class Servers {
         }
     }
 
-    public static async toggleLogger(id: string, user: User, types: string[], channel: TextChannel, toggle: boolean): Promise<void> {
+    public static async toggleLogger(id: string, userId: string, types: string[], channelId: string, toggle: boolean): Promise<void> {
         const server = await this.get(id);
         const existingChannels = await prisma.logChannel.findMany({
             where: {
@@ -138,10 +138,10 @@ export class Servers {
                             LogChannel: {
                                 create: {
                                     guildId: id,
-                                    textId: channel.id,
+                                    textId: channelId,
                                     type: types,
                                     mode: toggle,
-                                    moderator: user.id,
+                                    moderator: userId,
                                 }
                             }
                         }
@@ -152,7 +152,7 @@ export class Servers {
             const logChannel = await prisma.logChannel.findFirst({
                 where: {
                     guildId: id,
-                    textId: channel.id,
+                    textId: channelId,
                 },
             });
 
@@ -169,17 +169,17 @@ export class Servers {
                 await prisma.logChannel.create({
                     data: {
                         guildId: id,
-                        textId: channel.id,
+                        textId: channelId,
                         type: types,
                         mode: toggle,
-                        moderator: user.id,
+                        moderator: userId,
                     }
                 })
             }
         }
     }
 
-    public static async clearLogger(id: string, user: User, channel: TextChannel): Promise<void> {
+    public static async clearLogger(id: string, channelId: string): Promise<void> {
         const server = await this.get(id);
         if (!server) {
             return;
@@ -187,7 +187,7 @@ export class Servers {
         const logChannel = await prisma.logChannel.findFirst({
             where: {
                 guildId: id,
-                textId: channel.id,
+                textId: channelId,
             },
         });
 
@@ -231,7 +231,7 @@ export class Servers {
         return welcome;
     }
 
-    public static async setWelChannel(id: string, user: User, channel: TextChannel): Promise<void> {
+    public static async setWelChannel(id: string, userId: string, channelId: string): Promise<void> {
         const server = await this.get(id);
         if (!server) {
             await prisma.guild.create({
@@ -239,9 +239,9 @@ export class Servers {
                     guildId: id,
                     welcome: {
                         create: {
-                            welcomeChannel: channel.id,
+                            welcomeChannel: channelId,
                             welcomeToggle: true,
-                            moderator: user.id,
+                            moderator: userId,
                         }
                     }
                 }
@@ -259,25 +259,25 @@ export class Servers {
                         id: welcome.id,
                     },
                     data: {
-                        welcomeChannel: channel.id,
+                        welcomeChannel: channelId,
                         welcomeToggle: true,
-                        moderator: user.id,
+                        moderator: userId,
                     },
                 });
             } else {
                 await prisma.welcome.create({
                     data: {
                         guildId: id,
-                        welcomeChannel: channel.id,
+                        welcomeChannel: channelId,
                         welcomeToggle: true,
-                        moderator: user.id,
+                        moderator: userId,
                     }
                 })
             }
         }
     }
 
-    public static async setWelMessage(id: string, user: User, message: string): Promise<void> {
+    public static async setWelMessage(id: string, userId: string, message: string): Promise<void> {
         const server = await this.get(id);
         if (!server) {
             await prisma.guild.create({
@@ -286,7 +286,7 @@ export class Servers {
                     welcome: {
                         create: {
                             welcomeMesage: message,
-                            moderator: user.id,
+                            moderator: userId,
                         }
                     }
                 }
@@ -305,7 +305,7 @@ export class Servers {
                     },
                     data: {
                         welcomeMesage: message,
-                        moderator: user.id,
+                        moderator: userId,
                     },
                 });
             } else {
@@ -313,14 +313,14 @@ export class Servers {
                     data: {
                         guildId: id,
                         welcomeMesage: message,
-                        moderator: user.id,
+                        moderator: userId,
                     }
                 })
             }
         }
     }
 
-    public static async setWelToggle(id: string, user: User, toggle: boolean): Promise<void> {
+    public static async setWelToggle(id: string, userId: string, toggle: boolean): Promise<void> {
         const server = await this.get(id);
         if (!server) {
             await prisma.guild.create({
@@ -329,7 +329,7 @@ export class Servers {
                     welcome: {
                         create: {
                             welcomeToggle: toggle,
-                            moderator: user.id,
+                            moderator: userId,
                         }
                     }
                 }
@@ -348,7 +348,7 @@ export class Servers {
                     },
                     data: {
                         welcomeToggle: toggle,
-                        moderator: user.id,
+                        moderator: userId,
                     },
                 });
             } else {
@@ -356,17 +356,17 @@ export class Servers {
                     data: {
                         guildId: id,
                         welcomeToggle: toggle,
-                        moderator: user.id,
+                        moderator: userId,
                     }
                 })
             }
         }
     }
 
-    public static async toggleType(id: string, user: User, options: wlType): Promise<void> {
+    public static async toggleType(id: string, userId: string, options: wlType): Promise<void> {
         const server = await this.get(id);
         const toggleField = options.isEmbed ? 'welcomeEmbedToggle' : 'welcomeMessageToggle';
-        const data = { [toggleField]: true, moderator: user.id };
+        const data = { [toggleField]: true, moderator: userId };
 
         if (!server) {
             await prisma.guild.create({
@@ -387,14 +387,14 @@ export class Servers {
     }
 
 
-    public static async setWelEmbed(id: string, user: User, options: wlEmbed): Promise<void> {
+    public static async setWelEmbed(id: string, userId: string, options: wlEmbed): Promise<void> {
         const server = await this.get(id);
         const toggleField = options.title !== undefined ? 'title' : options.titleUrl !== undefined ? 'titleUrl' : options.description !== undefined ? 'description' : options.color !== undefined ? 'color' : options.image !== undefined ? 'image' : options.thumbnail !== undefined ? 'thumbnail' : options.footer !== undefined ? 'footer' : options.footerIcon !== undefined ? 'footerIcon' : options.author !== undefined ? 'author' : options.authorUrl !== undefined ? 'authorUrl' : options.authorIcon !== undefined ? 'authorIcon' : options.timestamp !== undefined ? 'timestamp' : null;
 
         if (toggleField) {
             const data: any = {
                 guildId: id,
-                moderator: user.id
+                moderator: userId,
             };
             if (options[toggleField] !== undefined) {
                 data[toggleField] = options[toggleField];

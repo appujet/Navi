@@ -176,7 +176,7 @@ export default class LoggerCmd extends Command {
                             for (const value of i.values) {
                                 logTypes.push(value);
                             }
-                            await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                             const embed = this.client.embed()
                                 .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                 .setColor(client.color.main)
@@ -198,7 +198,7 @@ export default class LoggerCmd extends Command {
                             for (const value of i.values) {
                                 logTypes.push(value);
                             }
-                            await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                             const embed = this.client.embed()
                                 .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                 .setColor(client.color.main)
@@ -220,7 +220,7 @@ export default class LoggerCmd extends Command {
                             for (const value of i.values) {
                                 logTypes.push(value);
                             }
-                            await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                             const embed = this.client.embed()
                                 .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                 .setColor(client.color.main)
@@ -242,7 +242,7 @@ export default class LoggerCmd extends Command {
                             for (const value of i.values) {
                                 logTypes.push(value);
                             }
-                            await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                             const embed = this.client.embed()
                                 .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                 .setColor(client.color.main)
@@ -264,7 +264,7 @@ export default class LoggerCmd extends Command {
                             for (const value of i.values) {
                                 logTypes.push(value);
                             }
-                            await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                             const embed = this.client.embed()
                                 .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                 .setColor(client.color.main)
@@ -286,7 +286,7 @@ export default class LoggerCmd extends Command {
                             for (const value of i.values) {
                                 logTypes.push(value);
                             }
-                            await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                             const embed = this.client.embed()
                                 .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                 .setColor(client.color.main)
@@ -308,7 +308,7 @@ export default class LoggerCmd extends Command {
                             for (const value of i.values) {
                                 logTypes.push(value);
                             }
-                            await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                             const embed = this.client.embed()
                                 .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                 .setColor(client.color.main)
@@ -332,7 +332,7 @@ export default class LoggerCmd extends Command {
                     case "enable":
                         if (!data) return ctx.sendEphemeral({ content: "There is no log channel set for this server.", ephemeral: true });
                         if (data && data.mode === true) return ctx.sendEphemeral({ content: `The logger is already enabled for this server.`, ephemeral: true });
-                        await Servers.toggleLogger(ctx.guild.id, ctx.author, data.type, channel, false)
+                        await Servers.toggleLogger(ctx.guild.id, ctx.author.id, data.type, channel.id, false)
                         const embed = this.client.embed()
                             .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                             .setColor(client.color.main)
@@ -342,7 +342,7 @@ export default class LoggerCmd extends Command {
                     case "disable":
                         if (!data) return ctx.sendEphemeral({ content: "There is no log channel set for this server.", ephemeral: true });
                         if (data && data.mode === false) return ctx.sendEphemeral({ content: `The logger is already disabled for this server.`, ephemeral: true });
-                        await Servers.toggleLogger(ctx.guild.id, ctx.author, data.type, channel, true)
+                        await Servers.toggleLogger(ctx.guild.id, ctx.author.id, data.type, channel.id, true)
                         const embed2 = this.client.embed()
                             .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                             .setColor(client.color.main)
@@ -361,7 +361,7 @@ export default class LoggerCmd extends Command {
                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                     .setColor(client.color.main)
                 embed.setDescription(`Successfully cleared the log channel for the server.`)
-                await Servers.clearLogger(ctx.guild.id, ctx.author, channel)
+                await Servers.clearLogger(ctx.guild.id, channel.id)
                 ctx.sendMessage({ embeds: [embed], components: [] });
             } else if (["info", "i"].includes(SubCommand)) {
                 const data = await client.prisma.logChannel.findFirst({ where: { guildId: ctx.guild.id } });
@@ -451,7 +451,7 @@ export default class LoggerCmd extends Command {
                                 for (const value of i.values) {
                                     logTypes.push(value);
                                 }
-                                await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                                await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                                 const embed = this.client.embed()
                                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                     .setColor(client.color.main)
@@ -474,7 +474,7 @@ export default class LoggerCmd extends Command {
                                 for (const value of i.values) {
                                     logTypes.push(value);
                                 }
-                                await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                                await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                                 const embed = this.client.embed()
                                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                     .setColor(client.color.main)
@@ -498,7 +498,7 @@ export default class LoggerCmd extends Command {
                                 for (const value of i.values) {
                                     logTypes.push(value);
                                 }
-                                await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                                await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                                 const embed = this.client.embed()
                                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                     .setColor(client.color.main)
@@ -520,7 +520,7 @@ export default class LoggerCmd extends Command {
                                 for (const value of i.values) {
                                     logTypes.push(value);
                                 }
-                                await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                                await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                                 const embed = this.client.embed()
                                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                     .setColor(client.color.main)
@@ -542,7 +542,7 @@ export default class LoggerCmd extends Command {
                                 for (const value of i.values) {
                                     logTypes.push(value);
                                 }
-                                await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                                await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                                 const embed = this.client.embed()
                                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                     .setColor(client.color.main)
@@ -564,7 +564,7 @@ export default class LoggerCmd extends Command {
                                 for (const value of i.values) {
                                     logTypes.push(value);
                                 }
-                                await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                                await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                                 const embed = this.client.embed()
                                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                     .setColor(client.color.main)
@@ -586,7 +586,7 @@ export default class LoggerCmd extends Command {
                                 for (const value of i.values) {
                                     logTypes.push(value);
                                 }
-                                await Servers.setLogger(ctx.guild.id, ctx.author, logTypes, channel, color);
+                                await Servers.setLogger(ctx.guild.id, ctx.author.id, logTypes, channel.id, color);
                                 const embed = this.client.embed()
                                     .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                                     .setColor(client.color.main)
@@ -615,7 +615,7 @@ export default class LoggerCmd extends Command {
                     case "enable":
                         if (!data) return ctx.sendMessage({ content: "There is no log channel set for this server." });
                         if (data && data.mode === true) return ctx.sendMessage({ content: "The log channel is already enabled for this server." });
-                        await Servers.toggleLogger(ctx.guild.id, ctx.author, data.type, channel, false)
+                        await Servers.toggleLogger(ctx.guild.id, ctx.author.id, data.type, channel.id, false)
                         const embed = this.client.embed()
                             .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                             .setColor(client.color.main)
@@ -625,7 +625,7 @@ export default class LoggerCmd extends Command {
                     case "disable":
                         if (!data) return ctx.sendMessage({ content: "There is no log channel set for this server." });
                         if (data && data.mode === false) return ctx.sendMessage({ content: "The log channel is already disabled for this server." });
-                        await Servers.toggleLogger(ctx.guild.id, ctx.author, data.type, channel, true)
+                        await Servers.toggleLogger(ctx.guild.id, ctx.author.id, data.type, channel.id, true)
                         const embed2 = this.client.embed()
                             .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                             .setColor(client.color.main)
@@ -661,7 +661,7 @@ export default class LoggerCmd extends Command {
                     for (const value of i.values) {
                         chan = value;
                     }
-                    await Servers.clearLogger(ctx.guild.id, ctx.author, chan);
+                    await Servers.clearLogger(ctx.guild.id, chan.id);
                     const embed = this.client.embed()
                         .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
                         .setColor(client.color.main)

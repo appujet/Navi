@@ -192,7 +192,7 @@ export default class Welcome extends Command {
 
                     const channelId = ctx.guild.channels.cache.get(channel) as any;
                     if (!channelId) return;
-                    await Servers.setWelChannel(ctx.guild.id, ctx.author, channelId);
+                    await Servers.setWelChannel(ctx.guild.id, ctx.author.id, channelId.id);
                     msg = await ctx.editMessage({ embeds: [embed], components: [wlcRow] });
                     const typeCol = msg.awaitMessageComponent({ filter, componentType: ComponentType.Button, time: 60000, errors: ["time"] });
                     typeCol.then(async (collected: any) => {
@@ -205,7 +205,7 @@ export default class Welcome extends Command {
                         switch (type) {
                             case "message":
                                 embed.setDescription(`Please enter the welcome message you would like to set. You can use the following placeholders: \n\`{user}\` - The user's mention. \n\`{username}\` - The user's username. \n\`{tag}\` - The user's tag. \n\`{server}\` - The server's name. \n\`{membercount}\` - The server's member count.\n\n**Example:**\n\`Welcome {user} to {server}! We now have {membercount} members!\``);
-                                await Servers.toggleType(ctx.guild.id, ctx.author, {
+                                await Servers.toggleType(ctx.guild.id, ctx.author.id, {
                                     isMessage: true,
                                 });
                                 msg = await ctx.editMessage({ embeds: [embed], components: [], fetchReply: true });
@@ -218,7 +218,7 @@ export default class Welcome extends Command {
                                     const message = collected.first().content;
                                     if (!message) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a message.").setColor(client.color.red)], components: [] });
                                     if (message.length > 1000) return ctx.editMessage({ embeds: [client.embed().setDescription("The message cannot be longer than 1000 characters.").setColor(client.color.red)], components: [] });
-                                    await Servers.setWelMessage(ctx.guild.id, ctx.author, message)
+                                    await Servers.setWelMessage(ctx.guild.id, ctx.author.id, message)
                                     embed.setDescription(`Welcome message set to: \`${message}\``);
                                     await ctx.editMessage({ embeds: [embed], components: [] });
                                 }).catch((err: any) => {
@@ -230,7 +230,7 @@ export default class Welcome extends Command {
                                 const embedRow = client.utils.createButtonRow(configType);
                                 const embedRow2 = client.utils.createButtonRow(configType2);
                                 embed.setDescription(`Please enter the welcome configuration type`)
-                                await Servers.toggleType(ctx.guild.id, ctx.author, {
+                                await Servers.toggleType(ctx.guild.id, ctx.author.id, {
                                     isEmbed: true,
                                 });
                                 msg = await ctx.editMessage({ embeds: [embed], components: [embedRow, embedRow2] });
@@ -254,7 +254,7 @@ export default class Welcome extends Command {
                                                 const title = collected.first().content;
                                                 if (!title) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a title.").setColor(client.color.red)], components: [] });
                                                 if (title.length > 256) return ctx.editMessage({ embeds: [client.embed().setDescription("The title cannot be longer than 256 characters.").setColor(client.color.red)], components: [] });
-                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                                     title: title,
                                                 });
                                                 embed.setDescription(`Welcome embed title set to: \`${title}\``);
@@ -275,7 +275,7 @@ export default class Welcome extends Command {
                                                 const description = collected.first().content;
                                                 if (!description) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a description.").setColor(client.color.red)], components: [] });
                                                 if (description.length > 2048) return ctx.editMessage({ embeds: [client.embed().setDescription("The description cannot be longer than 2048 characters.").setColor(client.color.red)], components: [] });
-                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                                     description: description,
                                                 });
                                                 embed.setDescription(`Welcome embed description set to: \`${description}\``);
@@ -296,7 +296,7 @@ export default class Welcome extends Command {
                                                 const color = collected.first().content;
                                                 if (!color) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a color.").setColor(client.color.red)], components: [] });
                                                 if (!color.match(/^#([0-9a-f]{3}){1,2}$/i)) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a valid hex color.").setColor(client.color.red)], components: [] });
-                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                                     color: color,
                                                 });
                                                 embed.setDescription(`Welcome embed color set to: \`${color}\``);
@@ -317,7 +317,7 @@ export default class Welcome extends Command {
                                                 const footer = collected.first().content;
                                                 if (!footer) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a footer.").setColor(client.color.red)], components: [] });
                                                 if (footer.length > 2048) return ctx.editMessage({ embeds: [client.embed().setDescription("The footer cannot be longer than 2048 characters.").setColor(client.color.red)], components: [] });
-                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                                await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                                     footer: footer,
                                                 });
                                                 embed.setDescription(`Welcome embed footer set to: \`${footer}\``);
@@ -369,7 +369,7 @@ export default class Welcome extends Command {
                 const type = collected.customId;
                 switch (type) {
                     case "message":
-                        await Servers.toggleType(ctx.guild.id, ctx.author, {
+                        await Servers.toggleType(ctx.guild.id, ctx.author.id, {
                             isMessage: true,
                         });
                         embed.setDescription(`Please enter the welcome message you would like to set. You can use the following placeholders: \n\`{user}\` - The user's mention. \n\`{username}\` - The user's username. \n\`{tag}\` - The user's tag. \n\`{server}\` - The server's name. \n\`{membercount}\` - The server's member count.\n\n**Example:**\n\`Welcome {user} to {server}! We now have {membercount} members!\``);
@@ -383,7 +383,7 @@ export default class Welcome extends Command {
                             const message = collected.first().content;
                             if (!message) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a message.").setColor(client.color.red)], components: [] });
                             if (message.length > 1000) return ctx.editMessage({ embeds: [client.embed().setDescription("The message cannot be longer than 1000 characters.").setColor(client.color.red)], components: [] });
-                            await Servers.setWelMessage(ctx.guild.id, ctx.author, message)
+                            await Servers.setWelMessage(ctx.guild.id, ctx.author.id, message)
                             embed.setDescription(`Welcome message set to: \`${message}\``);
                             embed.setTitle("Successfully set welcome message!");
                             await ctx.editMessage({ embeds: [embed], components: [] });
@@ -396,7 +396,7 @@ export default class Welcome extends Command {
                         const embedRow = client.utils.createButtonRow(configType);
                         const embedRow2 = client.utils.createButtonRow(configType2);
                         embed.setDescription(`Please enter the welcome configuration type`)
-                        await Servers.toggleType(ctx.guild.id, ctx.author, {
+                        await Servers.toggleType(ctx.guild.id, ctx.author.id, {
                             isEmbed: true,
                         });
                         finalMsg = await ctx.editMessage({ embeds: [finalEmbed], components: [] });
@@ -421,7 +421,7 @@ export default class Welcome extends Command {
                                         const title = collected.first().content;
                                         if (!title) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a title.").setColor(client.color.red)], components: [] });
                                         if (title.length > 256) return ctx.editMessage({ embeds: [client.embed().setDescription("The title cannot be longer than 256 characters.").setColor(client.color.red)], components: [] });
-                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                             title: title,
                                         });
                                         embed.setDescription(`Welcome embed title set to: \`${title}\``);
@@ -446,7 +446,7 @@ export default class Welcome extends Command {
                                         const description = collected.first().content;
                                         if (!description) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a description.").setColor(client.color.red)], components: [] });
                                         if (description.length > 2048) return ctx.editMessage({ embeds: [client.embed().setDescription("The description cannot be longer than 2048 characters.").setColor(client.color.red)], components: [] });
-                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                             description: description,
                                         });
                                         embed.setDescription(`Welcome embed description set to: \`${description}\``);
@@ -466,7 +466,7 @@ export default class Welcome extends Command {
                                         const color = collected.first().content;
                                         if (!color) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a color.").setColor(client.color.red)], components: [] });
                                         if (color.length > 7) return ctx.editMessage({ embeds: [client.embed().setDescription("The color cannot be longer than 7 characters.").setColor(client.color.red)], components: [] });
-                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                             color: color,
                                         });
                                         embed.setDescription(`Welcome embed color set to: \`${color}\``);
@@ -484,7 +484,7 @@ export default class Welcome extends Command {
                                         const footer = collected.first().content;
                                         if (!footer) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a footer.").setColor(client.color.red)], components: [] });
                                         if (footer.length > 2048) return ctx.editMessage({ embeds: [client.embed().setDescription("The footer cannot be longer than 2048 characters.").setColor(client.color.red)], components: [] });
-                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                             footer: footer,
                                         });
                                         embed.setDescription(`Welcome embed footer set to: \`${footer}\``);
@@ -502,7 +502,7 @@ export default class Welcome extends Command {
                                         const thumbnail = collected.first().attachments ? collected.first().attachments.first().url : collected.first().content;
                                         if (!thumbnail) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter a thumbnail.").setColor(client.color.red)], components: [] });
                                         if (thumbnail.length > 2048) return ctx.editMessage({ embeds: [client.embed().setDescription("The thumbnail cannot be longer than 2048 characters.").setColor(client.color.red)], components: [] });
-                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                             thumbnail: thumbnail,
                                         });
                                         embed.setImage(thumbnail);
@@ -521,7 +521,7 @@ export default class Welcome extends Command {
                                         const image = collected.first().attachments ? collected.first().attachments.first().url : collected.first().content;
                                         if (!image) return ctx.editMessage({ embeds: [client.embed().setDescription("You must enter an image.").setColor(client.color.red)], components: [] });
                                         if (image.length > 2048) return ctx.editMessage({ embeds: [client.embed().setDescription("The image cannot be longer than 2048 characters.").setColor(client.color.red)], components: [] });
-                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author, {
+                                        await Servers.setWelEmbed(ctx.guild.id, ctx.author.id, {
                                             image: image,
                                         });
                                         embed.setImage(image);

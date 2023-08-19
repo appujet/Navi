@@ -7,8 +7,7 @@ import config from "../config.js";
 import loadPlugins from "../plugin/index.js";
 import { ShoukakuClient, Queue } from "./index.js";
 import { Utils } from "../utils/Utils.js";
-prisma
-import emoji from "../assets/json/emojis.json" assert { type: "json" };
+import emoji from "../../assets/json/emojis.json" assert { type: "json" };
 import prisma from "./Prisma.js";
 
 
