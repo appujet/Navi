@@ -67,10 +67,10 @@ model Roles {
 }
 
 model User {
-  id        String     @id
-  userId    String     @unique
-  playlists Playlist[]
-  premium   Premium?
+  id         String       @id
+  userId     String       @unique
+  playlists  Playlist[]
+  premium    Premium?
   punishment Punishment[]
 }
 
@@ -220,19 +220,20 @@ model welcomeRole {
 }
 
 model Punishment {
-  id        Int            @id @unique @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   guildId   String
   guild     Guild?         @relation(fields: [guildId], references: [guildId])
   moderator String?
   type      PunishmentType
   reason    String?
   createdAt BigInt?
-  flags     BigInt         @default(0)
-  expires   BigInt?
+  expiresAt   BigInt?
   active    Boolean        @default(true)
-  User      User?          @relation(fields: [UserId], references: [userId])
-  UserId    String?
+  User      User?          @relation(fields: [userId], references: [userId])
+  userId    String?
   deleted   Boolean        @default(false)
+
+  @@unique([guildId, userId])
 }
 
 enum PunishmentType {
@@ -240,23 +241,28 @@ enum PunishmentType {
   KICK
   BAN
   WARN
-  OTHER
+  NONE
 }
 
 model AutoMod {
-  id           String   @id @default(uuid())
-  guildId      String   @unique
-  guild        Guild?   @relation(fields: [guildId], references: [guildId])
-  mode         Boolean  @default(false)
-  moderator    String?
-  badWords     Boolean  @default(false)
-  badWordsList String[]
-  links        Boolean  @default(false)
-  linksList    String[]
-  invites      Boolean  @default(false)
-  invitesList  String[]
-  caps         Boolean  @default(false)
-  capsPercent  Int?
-  spam         Boolean  @default(false)
-  spamCount    Int?
+  id                String         @id @default(uuid())
+  guildId           String         @unique
+  guild             Guild?         @relation(fields: [guildId], references: [guildId])
+  moderator         String?
+  badWords          Boolean        @default(false)
+  badWordsList      String[]
+  toxicityThreshold Int?           @default(5)
+  badWordsPun       PunishmentType @default(KICK)
+  links             Boolean        @default(false)
+  linksList         String[]
+  linksPun          PunishmentType @default(MUTE)
+  invites           Boolean        @default(false)
+  invitesList       String[]
+  invitesPun        PunishmentType @default(KICK)
+  caps              Boolean        @default(false)
+  capsPercent       Int?
+  capsPun           PunishmentType @default(MUTE)
+  spam              Boolean        @default(false)
+  spamCount         Int?
+  spamPun           PunishmentType
 }

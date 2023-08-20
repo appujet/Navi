@@ -256,7 +256,7 @@ export class Utils {
         return urlRegex.test(url);
     }
 
-   
+
 }
 
 export interface Button {

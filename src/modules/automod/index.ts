@@ -9,9 +9,9 @@ export default class AutoMod {
         this.client = cliient;
     }
     public async start() {
-        this.client.logger.info(`AutoMod is ready!`);
         this.client.on(Events.MessageCreate, async (message) => {
-            await BadWord.check(message)
+            await BadWord.check(this.client, message)
+            //this.client.logger.info(`AutoMod: BadWord check ran for ${message.author.tag} in ${message.guild?.name}`)
         })
     }
 }

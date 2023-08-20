@@ -164,7 +164,7 @@ const vLevl = [
             {
                 label: "Voice Channel Leave",
                 value: logType.VoiceLeave,
-            }, 
+            },
             {
                 label: "Voice Move",
                 value: logType.VoiceMove,
@@ -180,7 +180,7 @@ const vLevl = [
             {
                 label: "Voice Server Mute",
                 value: logType.VoiceServerMute,
-             }
+            }
         ],
         maxValues: 6,
         minValues: 1,
