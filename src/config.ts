@@ -4,7 +4,7 @@ dotenv.config();
 
 export default {
     token: process.env.TOKEN,
-    prefix: "!",
+    prefix: "+",
     color: {
         red: 0xff0000,
         green: 0x00ff00,

@@ -9,7 +9,7 @@ datasource db {
 
 model Guild {
   guildId    String       @unique
-  prefix     String?      @default("!")
+  prefix     String?      @default("+")
   setup      Setup?
   stay       stay?
   dj         Dj?

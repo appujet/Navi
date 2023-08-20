@@ -38,6 +38,11 @@ const LogType2 = [
         label: "Thread Events",
         style: ButtonStyle.Primary,
         customId: "thread"
+    },
+    {
+        label: "All Events",
+        style: ButtonStyle.Primary,
+        customId: "all"
     }
 ];
 

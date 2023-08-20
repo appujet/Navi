@@ -1,6 +1,6 @@
 import { Servers, logType } from "../../database/index.js";
 import { Command, Navi, Context } from "../../structures/index.js";
-import { StringSelectMenuBuilder, ComponentType, ActionRowBuilder, ChannelType } from "discord.js";
+import { StringSelectMenuBuilder, ComponentType, ActionRowBuilder, ChannelType, Message } from "discord.js";
 import { LogType2, logType1 } from "../../utils/Buttons.js";
 import { sLevl, mLevl, mLevl2, cLevl, rLevl, vLevl, tLevl } from "../../utils/seleteManus.js";
 
@@ -390,46 +390,75 @@ export default class LoggerCmd extends Command {
             if (["s", "set"].includes(SubCommand)) {
                 const row = client.utils.createButtonRow(logType1);
                 const row2 = client.utils.createButtonRow(LogType2);
-
-                const selectMenuChannels = client.utils.getTextChannels(client, ctx.guild.id);
-
-                const channelRow = new ActionRowBuilder()
-                    .addComponents(
-                        new StringSelectMenuBuilder()
-                            .setCustomId("selectChannel")
-                            .setPlaceholder("Select a channel to set as the log channel")
-                            .addOptions(selectMenuChannels)
-                            .setMaxValues(1)
-                    );
-
                 let channelId: any;
-                const embed = this.client.embed()
-                    .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
-                    .setColor(client.color.main)
-                embed.setDescription(`Please select the channel you want to set as the log channel.`)
+                let msg: any;
+                let channelRow: any
 
-                let msg = await ctx.sendMessage({ embeds: [embed], components: [channelRow] });
                 const filter = async (i: any) => {
                     i.deferUpdate();
                     return i.user.id === ctx.author.id;
                 };
-                if (channel) {
-                    if (channel.type !== ChannelType.GuildText) {
-                        embed.setDescription(`Please provide a text channel to set as the log channel.`)
-                        return ctx.editMessage({ embeds: [embed], components: [channelRow] });
-                    }
-                    channelId = channel.id;
-                }
-                const channelCol = msg.awaitMessageComponent({ filter, time: 60000, componentType: ComponentType.StringSelect, errors: ["time"] });
-                channelCol.then(async (i: any) => {
-                    channelId = i.values[0];
-                    embed.setDescription(`Please select the type of logs you want to enable for the server.`)
-                    msg = await ctx.editMessage({ embeds: [embed], components: [row, row2] });
-                }).catch(async (err: any) => {
-                    embed.setDescription(`You did not select a channel in time, please try again.`)
-                    msg = await ctx.editMessage({ embeds: [embed], components: [] });
-                });
+                const embed = this.client.embed()
+                const selectMenuChannels = client.utils.getTextChannels(client, ctx.guild.id);
+                if (!selectMenuChannels) return ctx.sendMessage({ content: "There are no text channels in this server." });
+                if (selectMenuChannels.length === 0) return ctx.sendMessage({ content: "There are no text channels in this server." });
+                if (selectMenuChannels.length > 25) {
+                    const embed = this.client.embed()
+                        .setColor(client.color.main)
+                        .setDescription(`Please select the channel you want to set as the log channel.`)
+                    msg = await ctx.sendMessage({ embeds: [embed] });
+                    const filter = (m: any) => m.author.id === ctx.author.id;
+                    msg.channel.awaitMessages({ filter, max: 1, time: 60000, errors: ["time"] }).then(async (collected: any) => {
+                        const ch = collected.first().mentions.channels.first() || ctx.guild.channels.cache.get(collected.first().content);
+                        channelId = ch.id;
+                        if (!channelId) {
+                            const embed = this.client.embed()
+                                .setColor(client.color.main)
+                                .setDescription(`Please mention a valid channel to set as the log channel for the server.`)
+                            return ctx.editMessage({ embeds: [embed] });
+                        }
+                        embed.setDescription(`Please select the type of logs you want to enable for the server.`)
+                        msg = await ctx.editMessage({ embeds: [embed], components: [row, row2] });
+                    }).catch(async (err: any) => {
+                        const embed = this.client.embed()
+                            .setColor(client.color.main)
+                            .setDescription(`You took too long to respond, please run the command again to set the log channel.`)
+                        await ctx.sendMessage({ embeds: [embed] });
+                        return;
+                    });
+                } else {
+                    channelRow = new ActionRowBuilder()
+                        .addComponents(
+                            new StringSelectMenuBuilder()
+                                .setCustomId("selectChannel")
+                                .setPlaceholder("Select a channel to set as the log channel")
+                                .addOptions(selectMenuChannels)
+                                .setMaxValues(1)
+                        );
+                    const embed = this.client.embed()
+                        .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
+                        .setColor(client.color.main)
+                    embed.setDescription(`Please select the channel you want to set as the log channel.`)
 
+                    msg = await ctx.sendMessage({ embeds: [embed], components: [channelRow] });
+
+                    if (channel) {
+                        if (channel.type !== ChannelType.GuildText) {
+                            embed.setDescription(`Please provide a text channel to set as the log channel.`)
+                            return ctx.editMessage({ embeds: [embed], components: [channelRow] });
+                        }
+                        channelId = channel.id;
+                    }
+                    const channelCol = msg.awaitMessageComponent({ filter, time: 60000, componentType: ComponentType.StringSelect, errors: ["time"] });
+                    channelCol.then(async (i: any) => {
+                        channelId = i.values[0];
+                        embed.setDescription(`Please select the type of logs you want to enable for the server.`)
+                        msg = await ctx.editMessage({ embeds: [embed], components: [row, row2] });
+                    }).catch(async (err: any) => {
+                        embed.setDescription(`You did not select a channel in time, please try again.`)
+                        msg = await ctx.editMessage({ embeds: [embed], components: [] });
+                    });
+                }
                 const collector = msg.awaitMessageComponent({ filter, time: 60000, componentType: ComponentType.Button, errors: ["time"] });
                 collector.then(async (i: any) => {
                     const type = i.customId;
@@ -598,6 +627,15 @@ export default class LoggerCmd extends Command {
                                 msg = await ctx.editMessage({ embeds: [embed1], components: [] });
                                 return;
                             });
+                            break;
+                        case "all":
+                            const alllogTypes = Object.values(logType);
+                            await Servers.setLogger(ctx.guild.id, ctx.author.id, alllogTypes, channel.id, color);
+                            const embed = this.client.embed()
+                                .setAuthor({ name: ctx.guild.name, iconURL: ctx.guild.iconURL({}) })
+                                .setDescription(`Successfully set the log channel for the server to ${channel} and enabled the following log types: \`${alllogTypes.join(", ")}\``)
+                                .setColor(client.color.main)
+                            ctx.editMessage({ embeds: [embed], components: [] });
                             break;
                     }
                 }).catch(async (err: any) => {
