@@ -1,6 +1,7 @@
+import AutoMod from "../../modules/automod/index.js";
 import YouTubeNotification from "../../modules/notification/YouTube.js";
 import { Event, Navi } from "../../structures/index.js";
-import { ActivityType, ActivityOptions } from "discord.js";
+import { ActivityType } from "discord.js";
 
 
 export default class Ready extends Event {
@@ -16,5 +17,6 @@ export default class Ready extends Event {
             type: ActivityType.Listening,
         });
         new YouTubeNotification(this.client).start().catch(() => { });
+        new AutoMod(this.client).start().catch(() => { });
     }
 }

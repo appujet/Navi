@@ -19,7 +19,8 @@ model Guild {
   log        LogChannel[]
   premium    Premium?
   welcome    Welcome?
-  ban        Ban[]
+  punishment Punishment[]
+  automod    AutoMod?
 }
 
 model Setup {
@@ -70,7 +71,7 @@ model User {
   userId    String     @unique
   playlists Playlist[]
   premium   Premium?
-  ban       Ban[]
+  punishment Punishment[]
 }
 
 model Playlist {
@@ -218,13 +219,44 @@ model welcomeRole {
   @@unique([guildId, roleId])
 }
 
-model Ban {
-  id        String   @id @default(uuid())
+model Punishment {
+  id        Int            @id @unique @default(autoincrement())
   guildId   String
-  guild     Guild?   @relation(fields: [guildId], references: [guildId])
-  userId    String
-  user      User?    @relation(fields: [userId], references: [userId])
-  reason    String?
+  guild     Guild?         @relation(fields: [guildId], references: [guildId])
   moderator String?
-  time      DateTime
+  type      PunishmentType
+  reason    String?
+  createdAt BigInt?
+  flags     BigInt         @default(0)
+  expires   BigInt?
+  active    Boolean        @default(true)
+  User      User?          @relation(fields: [UserId], references: [userId])
+  UserId    String?
+  deleted   Boolean        @default(false)
+}
+
+enum PunishmentType {
+  MUTE
+  KICK
+  BAN
+  WARN
+  OTHER
+}
+
+model AutoMod {
+  id           String   @id @default(uuid())
+  guildId      String   @unique
+  guild        Guild?   @relation(fields: [guildId], references: [guildId])
+  mode         Boolean  @default(false)
+  moderator    String?
+  badWords     Boolean  @default(false)
+  badWordsList String[]
+  links        Boolean  @default(false)
+  linksList    String[]
+  invites      Boolean  @default(false)
+  invitesList  String[]
+  caps         Boolean  @default(false)
+  capsPercent  Int?
+  spam         Boolean  @default(false)
+  spamCount    Int?
 }

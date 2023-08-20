@@ -51,17 +51,20 @@ export default class YouTubeNotification {
     private client: Navi;
     private parser: Parser = new Parser();
     private BASE_URL = 'https://www.youtube.com/feeds/videos.xml?channel_id=';
+    private interval: NodeJS.Timeout | null = null;
     constructor(client: Navi) {
         this.client = client;
     }
     public async start() {
         this.client.logger.info('YouTube Notification started');
-
-        setInterval(async () => {
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+        this.interval = setInterval(async () => {
             const youtubeChannels = await this.client.prisma.youtube.findMany({ where: { mode: true } });
             if (!youtubeChannels) return;
             this.send(youtubeChannels);
-        }, 5000);
+        }, 10000);
     }
     private async send(data: any[]) {
         await Promise.all(data.map(async (channel) => {
@@ -71,7 +74,6 @@ export default class YouTubeNotification {
             if (!textChannel) return;
             const lastVideo = await this.getLatestVideos(channel.channelId);
             if (!lastVideo) return;
-
             if (channel.lastVideoId === lastVideo[0].id) return;
             await this.client.prisma.youtube.update({
                 where: {

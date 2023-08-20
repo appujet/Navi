@@ -1,5 +1,5 @@
 import { Event, Navi, ClientLogger } from "../../structures/index.js";
-import { GuildBan, AuditLogEvent} from "discord.js";
+import { GuildBan, AuditLogEvent } from "discord.js";
 import { Servers, logType } from "../../database/index.js";
 
 
@@ -12,14 +12,14 @@ export default class GuildBanRemove extends Event {
     public async run(ban: GuildBan): Promise<any> {
         try {
             if (ban.user.partial) await ban.user.fetch();
-        } catch (err) {
+        } catch (err: any) {
             if (['Missing Permissions', 'Missing Access'].includes(err.message)) return;
             return this.client.logger.error(`Error fetching ban: ${err.message}`);
         }
         const log = await Servers.getLogger(ban.guild.id, logType.MemberUnban);
 
         if (!log) return;
-       
+
         const audit = await ban.guild.fetchAuditLogs({ type: AuditLogEvent.MemberBanRemove, limit: 1 });
         const entry = audit.entries.first();
         const user = await this.client.users.fetch(entry.executor.id);

@@ -1,4 +1,4 @@
-import { Collection, ClientOptions, Routes, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, PermissionsBitField, ApplicationCommandType, Client, EmbedBuilder , Embed, APIEmbed} from "discord.js";
+import { Collection, ClientOptions, Routes, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, PermissionsBitField, ApplicationCommandType, Client, EmbedBuilder, Embed, APIEmbed } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -7,9 +7,8 @@ import config from "../config.js";
 import loadPlugins from "../plugin/index.js";
 import { ShoukakuClient, Queue } from "./index.js";
 import { Utils } from "../utils/Utils.js";
-import emoji from "../../assets/json/emojis.json" assert { type: "json" };
+import emoji from "../assets/json/emojis.json" assert { type: "json" };
 import prisma from "./Prisma.js";
-
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -47,7 +46,6 @@ export default class Navi extends Client {
             this.logger.error(`Unable to connect to the database!`);
             this.logger.error(err);
         });
-        
         loadPlugins(this);
         return await this.login(token);
     };

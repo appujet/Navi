@@ -13,7 +13,7 @@ export default class GuildBanAdd extends Event {
         try {
             if (ban.partial) await ban.fetch();
             if (ban.user.partial) await ban.user.fetch();
-        } catch (err) {
+        } catch (err: any) {
             if (['Missing Permissions', 'Missing Access'].includes(err.message)) return;
             return this.client.logger.error(`Error fetching ban: ${err.message}`);
         }

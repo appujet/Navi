@@ -1,28 +1,35 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "lib": [
-            "ESNext",
-        ],
-        "declaration": true,
-        "sourceMap": true,
-        "outDir": "./dist",
-        "rootDir": "./",
         "strict": false,
+        "outDir": "dist",
+        "module": "ESNext",
+        "target": "ESNext",
+        "lib": [
+            "ESNext"
+        ],
         "moduleResolution": "node",
-        "esModuleInterop": true,
         "resolveJsonModule": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
+        "declaration": true,
+        "rootDir": "src",
+        "useUnknownInCatchVariables": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "allowUnreachableCode": false,
         "skipLibCheck": true,
         "importHelpers": true,
-        "forceConsistentCasingInFileNames": true
+        "typeRoots": [
+            "node_modules/@types",
+        ],
+        "sourceMap": true,
     },
     "include": [
         "src/**/*",
+        "src/assets/**/*",
     ],
     "exclude": [
-        "node_modules",
+        "/.github",
+        "./dist",
+        "./node_modules",
+        "src/types"
     ]
 }
