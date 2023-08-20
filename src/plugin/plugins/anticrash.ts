@@ -2,8 +2,8 @@ import { BotPlugin } from '../types.js';
 import { Navi } from '../../structures/index.js';
 
 
-const aintiCrash: BotPlugin = {
-    name: 'AintiCrash Plugin',
+const antiCrash: BotPlugin = {
+    name: 'AntiCrash Plugin',
     version: '1.0.0',
     author: 'Blacky',
     initialize: (client: Navi) => {
@@ -27,4 +27,4 @@ const aintiCrash: BotPlugin = {
     }
 }
 
-export default aintiCrash;
+export default antiCrash;
